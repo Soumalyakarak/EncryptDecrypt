@@ -2,8 +2,8 @@
 #define PROCESS_MANAGEMENT_HPP
 
 #include "Task.hpp"
-#include<queue>
-#include<memory>
+#include <queue>
+#include <memory>
 
 class ProcessManagement{
   public:

@@ -9,23 +9,24 @@ int main(int argc, char *argv[]){
     std::string directory;
     std::string action;
 
-    std::cout<<"Enter the directory: "<<std::endl;
+    std::cout<<"Enter the directory: ";
     std::getline(std::cin, directory);
 
-    std::cout<<"Enter the action(encrypt/decrypt): "<<std::endl;
+    std::cout<<"Enter the action(encrypt/decrypt): ";
     std::getline(std::cin, action);
 
     try
     {
         if(fs::exists(directory) && fs::is_directory(directory)){
             ProcessManagement processManagement;
-            for(const auto &entry: fs::recursive_directory_iterator(directory)){
+            for(const auto &entry : fs::recursive_directory_iterator(directory)){
                 if(entry.is_regular_file()){
                     std::string filePath = entry.path().string();
                     IO io(filePath);
                     std::fstream f_stream = std::move(io.getFileStream());
+
                     if(f_stream.is_open()){
-                        Action taskAction = (action == "ENCRYPT"?Action::ENCRYPT : Action::DECRYPT);
+                        Action taskAction = (action == "encrypt") ? Action::ENCRYPT : Action::DECRYPT;
                         auto task = std::make_unique<Task>(std::move(f_stream), taskAction, filePath);
                         processManagement.SubmitToQueue(std::move(task));
                     }else{
@@ -35,12 +36,13 @@ int main(int argc, char *argv[]){
             }
             processManagement.executeTasks();
         }else{
-            std::cout<<"Invalid directory Path:"<<std::endl;
+            std::cout<<"Invalid directory Path!"<<std::endl;
         }
     }
     catch(const fs::filesystem_error &e)
     {
-        std::cerr <<"Filesystem error: "<<e.what()<< '\n';
+        std::cerr <<"Filesystem error: "<<e.what()<<std::endl;
     }
     
+    return 0;
 }

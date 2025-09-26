@@ -32,13 +32,13 @@ struct Task{
        std::string actionStr;
 
        if(std::getline(iss, filePath, ',' ) && std::getline(iss, actionStr)){
-          Action action = (actionStr == "ENCRYPT"?Action::ENCRYPT: Action::DECRYPT);
+          Action action = (actionStr == "ENCRYPT") ? Action::ENCRYPT : Action::DECRYPT;
           IO io(filePath);
           std::fstream f_stream = std::move(io.getFileStream());
           if(f_stream.is_open()){
             return Task(std::move(f_stream), action, filePath);
           }else{
-            throw std::runtime_error("Failed to oprn file: "+ filePath);
+            throw std::runtime_error("Failed to open file: "+ filePath);
           }
        }else{
            throw std::runtime_error("Invalid task data format");
