@@ -1,8 +1,8 @@
-#include "BenchmarkLogger.hpp"
+#include "BenchmarkLogger2.hpp"
 #include<iostream>
 #include<filesystem>
-#include "./src/app/processes/ProcessManagement.hpp"
-#include "./src/app/processes/Task.hpp"
+#include "./src/app/threads/ThreadManagement.hpp"
+#include "./src/app/threads/Task.hpp"
 
 namespace fs = std::filesystem;
 
@@ -16,12 +16,12 @@ int main(int argc, char *argv[]){
     std::cout<<"Enter the action(encrypt/decrypt): ";
     std::getline(std::cin, action);
 
-    BenchmarkLogger benchmark("Multiprocess " + action + "ion"); 
+    BenchmarkLogger2 benchmark("Multithreaded " + action + "ion"); 
 
     try
     {
         if(fs::exists(directory) && fs::is_directory(directory)){
-            ProcessManagement processManagement; 
+            ThreadManagement threadManagement; 
 
             for(const auto &entry : fs::recursive_directory_iterator(directory)){
                 if(entry.is_regular_file()){
@@ -32,21 +32,21 @@ int main(int argc, char *argv[]){
                     if(f_stream.is_open()){
                         Action taskAction = (action == "encrypt") ? Action::ENCRYPT : Action::DECRYPT;
                         auto task = std::make_unique<Task>(std::move(f_stream), taskAction, filePath);
-                        processManagement.SubmitToQueue(std::move(task));
+                        threadManagement.SubmitToQueue(std::move(task));
 
-                        BenchmarkLogger::record_file_operation(filePath, true);
+                        BenchmarkLogger2::record_file_operation(filePath, true);
                     }else{
                         std::cout<<"Unable to open the file: "<<filePath<<std::endl;
 
-                        BenchmarkLogger::record_file_operation(filePath, false);
+                        BenchmarkLogger2::record_file_operation(filePath, false);
                     }
                 }
             }
-            BenchmarkLogger::log("About to execute tasks...");
+            BenchmarkLogger2::log("About to execute tasks...");
             // run tasks
-            processManagement.executeTasks();
+            threadManagement.executeTasks();
 
-            BenchmarkLogger::log("Tasks execution completed");
+            BenchmarkLogger2::log("Tasks execution completed");
         }else{
             std::cout<<"Invalid directory Path!"<<std::endl;
         }
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
         std::cerr <<"Filesystem error: "<<e.what()<<std::endl;
     }
 
-    if (getpid() == benchmark.getMainPID()) {
+    if (std::this_thread::get_id() == benchmark.getMainThreadID()) {
         auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::cout << "Exiting the encryption/decryption at: "
                   << std::put_time(std::localtime(&now), "%Y-%m-%d %H:%M:%S") << std::endl;

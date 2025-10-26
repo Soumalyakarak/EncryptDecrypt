@@ -1,5 +1,5 @@
-#ifndef PROCESS_MANAGEMENT_HPP
-#define PROCESS_MANAGEMENT_HPP
+#ifndef THREAD_MANAGEMENT_HPP
+#define THREAD_MANAGEMENT_HPP
 
 #include "Task.hpp"
 #include <queue>
@@ -8,13 +8,13 @@
 #include <semaphore.h>
 #include <mutex>
 
-class ProcessManagement
+class ThreadManagement
 {
      sem_t* itemsSemaphore;
      sem_t* emptySlotsSemaphore;
 public:
-     ProcessManagement();
-     ~ProcessManagement();
+     ThreadManagement();
+     ~ThreadManagement();
      bool SubmitToQueue(std::unique_ptr<Task> task);
      void executeTasks();
 

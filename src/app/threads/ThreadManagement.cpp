@@ -1,4 +1,4 @@
-#include "ProcessManagement.hpp"
+#include "ThreadManagement.hpp"
 #include<iostream>
 #include<cstring>
 #include<sys/wait.h>
@@ -7,8 +7,9 @@
 #include <atomic>
 #include <sys/fcntl.h>
 #include <semaphore.h>
+#include<thread>
 
-ProcessManagement::ProcessManagement(){
+ThreadManagement::ThreadManagement(){
     itemsSemaphore = sem_open("/items_semaphore", O_CREAT, 0666, 0);
     emptySlotsSemaphore = sem_open("/empty_slots_semaphore", O_CREAT, 0666, 1000);
     shmFd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
@@ -19,12 +20,12 @@ ProcessManagement::ProcessManagement(){
     sharedMem->size.store(0);
 }
 
-ProcessManagement::~ProcessManagement() {
+ThreadManagement::~ThreadManagement() {
     munmap(sharedMem, sizeof(SharedMemory));
     shm_unlink(SHM_NAME);
 }
 
-bool ProcessManagement::SubmitToQueue(std::unique_ptr<Task>task){
+bool ThreadManagement::SubmitToQueue(std::unique_ptr<Task>task){
     sem_wait(emptySlotsSemaphore);
     std::unique_lock<std::mutex> lock(queueLock);
 
@@ -36,23 +37,14 @@ bool ProcessManagement::SubmitToQueue(std::unique_ptr<Task>task){
     sharedMem->size.fetch_add(1);
     lock.unlock();
     sem_post(itemsSemaphore);
+    
+    std::thread thread_1(&ThreadManagement::executeTasks, this);
+    thread_1.detach();
 
-    int pid = fork();
-    if(pid<0){
-        return false;
-    }else if(pid == 0){
-        // std::cout<<"Entering the child process"<<std::endl;
-        executeTasks();
-        exit(0);
-        // std::cout<<"Exiting the child process"<<std::endl;
-    }
-    // else{
-    //     std::cout<<"Entering the parent process"<<std::endl;
-    // }
     return true;
 }
 
-void ProcessManagement::executeTasks(){
+void ThreadManagement::executeTasks(){
    sem_wait(itemsSemaphore);
    std::unique_lock<std::mutex> lock(queueLock);
    char taskstr[256];
