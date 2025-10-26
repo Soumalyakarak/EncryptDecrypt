@@ -67,5 +67,5 @@ To explore the implementations in each branch:
    ./encrypty_decrypt_mt
    # type directory name which is created from makeDirs.py
    test
-   ENCRYPT # after giving directory name, give ENCRYPT or DECRYPT to tell what to do
+   encrypt # after giving directory name, give encrypt or decrypt to tell what to do
    ```
