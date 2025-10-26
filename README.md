@@ -36,17 +36,11 @@ Here is a screenshot of the benchmark output:
 
 ![Benchmark Result](images/MultiProcessing_encrypt.png)
 ![Benchmark Result](images/MultiProcessing_decrypt.png)
-![Benchmark Result](images/MultiThreading_encrypt.png)
-![Benchmark Result](images/MultiThreading_decrypt.png)
 
-## Future Scope
+For MultiThreading results:
 
-Support Multiple Encryption Algorithms-
-Allow users to choose from different encryption standards (e.g., AES, ChaCha20, RSA) to balance performance and security requirements.
-
-GPU Acceleration-
-Offload heavy cryptographic operations to GPUs using CUDA or OpenCL to dramatically speed up processing of large datasets.
-
+- [Multithreading Encrypt](images/MultiThreading_encrypt.png)
+- [Multithreading Decrypt](images/MultiThreading_decrypt.png)
 
 ## Getting Started
 
@@ -69,3 +63,11 @@ To explore the implementations in each branch:
    test
    encrypt # after giving directory name, give encrypt or decrypt to tell what to do
    ```
+
+## Future Scope
+
+Support Multiple Encryption Algorithms-
+Allow users to choose from different encryption standards (e.g., AES, ChaCha20, RSA) to balance performance and security requirements.
+
+GPU Acceleration-
+Offload heavy cryptographic operations to GPUs using CUDA or OpenCL to dramatically speed up processing of large datasets.
