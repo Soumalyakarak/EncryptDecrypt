@@ -1,3 +1,16 @@
+# macOS
 .DS_Store
+
+# Text files generated during runs
 test/*.txt
 
+# Environment files
+.env
+
+# Python virtual environment
+myvenv/
+
+# Build outputs or binaries (if you create them)
+*.o
+encrypt_decrypt
+encrypt_decrypt_mt

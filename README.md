@@ -71,3 +71,8 @@ Allow users to choose from different encryption standards (e.g., AES, ChaCha20, 
 
 GPU Acceleration-
 Offload heavy cryptographic operations to GPUs using CUDA or OpenCL to dramatically speed up processing of large datasets.
+
+## 🪪 License
+This project is licensed under the [MIT License](./LICENSE) © 2025 Soumalya Karak.
+
+⭐ **If you found this project helpful, give it a star!**
