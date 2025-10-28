@@ -53,7 +53,7 @@ To explore the implementations in each branch:
    # Now make a virtual env and activate
    python -m venv /myvenv
    source myvenv/bin/activate
-   python makeDirs.py
+   python3 makeDirs.py
    make all
    # In case of MultiProcessing
    ./encrypty_decrypt
