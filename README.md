@@ -30,7 +30,7 @@ The repository contains two primary branches, each focusing on a distinct parall
 
 ## Benchmark Results
 
-All timing and benchmarking is done using C++’s <chrono> library for high-precision measurement.
+All timing and benchmarking is done using C++'s `<chrono>` library for high-precision measurement.
 
 Here is a screenshot of the benchmark output:
 
