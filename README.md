@@ -47,17 +47,17 @@ All timing and benchmarking is done using C++'s `<chrono>` library for high-prec
 
 Here is a screenshot of the benchmark output:
 
--[Benchmark Result](images/MultiProcessing_encrypt(1).png)
--[Benchmark Result](images/MultiProcessing_decrypt(1).png)
+![Benchmark Result](images/MultiThreading_encrypt(1).png)
+![Benchmark Result](images/MultiThreading_decrypt(1).png)
 
 For MultiThreading results:
 
-! [Multithreading Encrypt](images/MultiThreading_encrypt(1).png)
-! [Multithreading Decrypt](images/MultiThreading_decrypt(1).png)
+- [MultiProcessing Encrypt](images/MultiProcessing_encrypt(1).png)
+- [MultiProcessing Decrypt](images/MultiProcessing_decrypt(1).png)
 
 ## Getting Started
 
-To explore the implementations in each branch:
+To explore the implementation:
 
    ```bash
    git clone <repo-url>
