@@ -53,6 +53,6 @@ Cryption_mt.o: src/app/encryptDecrypt/Cryption.cpp
 
 clean:
 	rm -f $(MAIN_OBJ) $(CRYPTION_OBJ) $(THREAD_OBJ) $(MAIN_TARGET) $(CRYPTION_TARGET) $(THREAD_TARGET) Cryption_mt.o
-	@echo "🧹 Cleaned all build artifacts."
+	@echo "Cleaned all build artifacts."
 
 .PHONY: clean all

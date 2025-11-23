@@ -6,11 +6,11 @@ This project demonstrates the implementation of encryption and decryption mechan
 
 ## Branches
 
-The repository contains two primary branches, each focusing on a distinct parallel processing approach:
+The repository contains two distinct parallel processing approach:
 
-### 1. `add/childProcessing`
+### 1. `MultiProcessing`
 
-**Description:** This branch showcases the use of parallel multiprocessing by creating child processes to handle encryption and decryption tasks. It utilizes the `fork()` system call to spawn child processes, enabling concurrent execution of tasks.
+**Description:** This approach showcases the use of parallel multiprocessing by creating child processes to handle encryption and decryption tasks. It utilizes the `fork()` system call to spawn child processes, enabling concurrent execution of tasks.
 
 **Key Features:**
 
@@ -18,9 +18,9 @@ The repository contains two primary branches, each focusing on a distinct parall
 - **Task Queue:** Manages encryption and decryption tasks using a queue structure.
 - **Task Execution:** Child processes execute tasks independently, allowing parallel processing.
 
-### 2. `add/multithreading`
+### 2. `Multithreading`
 
-**Description:** This branch focuses on multithreading combined with shared memory to perform encryption and decryption. It employs POSIX threads (`pthread`) and utilizes shared memory segments for efficient inter-thread communication.
+**Description:** This approach focuses on multithreading combined with shared memory to perform encryption and decryption. It employs POSIX threads (`pthread`) and utilizes shared memory segments for efficient inter-thread communication.
 
 **Key Features:**
 
@@ -28,19 +28,32 @@ The repository contains two primary branches, each focusing on a distinct parall
 - **Shared Memory:** Utilizes shared memory for communication between threads.
 - **Semaphores:** Employs semaphores to manage synchronization and ensure data consistency.
 
+## System Architecture
+
+The following diagram illustrates the high-level workflow used in
+the parallel file encryption/decryption system:
+
+> Tasks are passed to child workers using RAII-safe ownership transfer (`std::unique_ptr`)
+> and processed in parallel using shared memory and semaphores.
+
+<p align="center">
+  <img src="images/Parallel_Cryption_architecture.png" alt="Parallel Encryption Architecture Diagram" width="90%">
+</p>
+
+
 ## Benchmark Results
 
 All timing and benchmarking is done using C++'s `<chrono>` library for high-precision measurement.
 
 Here is a screenshot of the benchmark output:
 
-![Benchmark Result](images/MultiProcessing_encrypt.png)
-![Benchmark Result](images/MultiProcessing_decrypt.png)
+-[Benchmark Result](images/MultiProcessing_encrypt(1).png)
+-[Benchmark Result](images/MultiProcessing_decrypt(1).png)
 
 For MultiThreading results:
 
-- [Multithreading Encrypt](images/MultiThreading_encrypt.png)
-- [Multithreading Decrypt](images/MultiThreading_decrypt.png)
+! [Multithreading Encrypt](images/MultiThreading_encrypt(1).png)
+! [Multithreading Decrypt](images/MultiThreading_decrypt(1).png)
 
 ## Getting Started
 
@@ -49,7 +62,6 @@ To explore the implementations in each branch:
    ```bash
    git clone <repo-url>
    cd EncryptDecrypt
-   git checkout <branch>
    # Now make a virtual env and activate
    python -m venv /myvenv
    source myvenv/bin/activate
