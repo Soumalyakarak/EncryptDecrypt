@@ -62,15 +62,18 @@ To explore the implementation:
    ```bash
    git clone <repo-url>
    cd EncryptDecrypt
+   # make a .env file 
+   touch .env 
    # Now make a virtual env and activate
    python -m venv /myvenv
    source myvenv/bin/activate
+   # create a directory name test for testing the project
    python3 makeDirs.py
    make all
    # In case of MultiProcessing
-   ./encrypty_decrypt
+   ./encrypt_decrypt
    # In case of MultiThreading
-   ./encrypty_decrypt_mt
+   ./encrypt_decrypt_mt
    # type directory name which is created from makeDirs.py
    test
    encrypt # after giving directory name, give encrypt or decrypt to tell what to do
