@@ -7,10 +7,11 @@ test/*.txt
 # Environment files
 .env
 
+# Build directory
+build/
+
 # Python virtual environment
 myvenv/
 
-# Build outputs or binaries (if you create them)
+# Object files
 *.o
-encrypt_decrypt
-encrypt_decrypt_mt

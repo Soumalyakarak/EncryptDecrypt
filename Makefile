@@ -1,9 +1,15 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -g -Wall -I. -Isrc/app/encryptDecrypt -Isrc/app/FileHandling -Isrc/app/processes -Isrc/app/threads
 
-MAIN_TARGET = encrypt_decrypt
-CRYPTION_TARGET = cryption
-THREAD_TARGET = encrypt_decrypt_mt
+# OpenSSL libraries
+LIBS = -lssl -lcrypto
+
+# Build directory
+BUILD_DIR = build
+
+MAIN_TARGET = $(BUILD_DIR)/encrypt_decrypt
+CRYPTION_TARGET = $(BUILD_DIR)/cryption
+THREAD_TARGET = $(BUILD_DIR)/encrypt_decrypt_mt
 
 MAIN_SRC = main.cpp \
            src/app/processes/ProcessManagement.cpp \
@@ -24,35 +30,44 @@ THREAD_SRC = main_mt.cpp \
              src/app/FileHandling/ReadEnv.cpp \
              BenchmarkLogger2.cpp
 
-MAIN_OBJ = $(MAIN_SRC:.cpp=.o)
-CRYPTION_OBJ = $(CRYPTION_SRC:.cpp=.o)
-# For threads, compile Cryption.cpp separately with -DMULTITHREAD
-THREAD_OBJ = main_mt.o \
-             src/app/threads/ThreadManagement.o \
-             src/app/FileHandling/IO.o \
-             src/app/FileHandling/ReadEnv.o \
-             Cryption_mt.o \
-             BenchmarkLogger2.o
+# Object files inside build/
+MAIN_OBJ = $(addprefix $(BUILD_DIR)/, $(MAIN_SRC:.cpp=.o))
+CRYPTION_OBJ = $(addprefix $(BUILD_DIR)/, $(CRYPTION_SRC:.cpp=.o))
+
+THREAD_OBJ = $(BUILD_DIR)/main_mt.o \
+             $(BUILD_DIR)/src/app/threads/ThreadManagement.o \
+             $(BUILD_DIR)/src/app/FileHandling/IO.o \
+             $(BUILD_DIR)/src/app/FileHandling/ReadEnv.o \
+             $(BUILD_DIR)/Cryption_mt.o \
+             $(BUILD_DIR)/BenchmarkLogger2.o
 
 all: $(MAIN_TARGET) $(CRYPTION_TARGET) $(THREAD_TARGET)
 
+# Link targets
 $(MAIN_TARGET): $(MAIN_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
 $(CRYPTION_TARGET): $(CRYPTION_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LIBS)
 
 $(THREAD_TARGET): $(THREAD_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@ -lpthread
+	$(CXX) $(CXXFLAGS) $^ -o $@ -lpthread $(LIBS)
 
-Cryption_mt.o: src/app/encryptDecrypt/Cryption.cpp
+# Special multithread Cryption
+$(BUILD_DIR)/Cryption_mt.o: src/app/encryptDecrypt/Cryption.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -DMULTITHREAD -c $< -o $@
 
-%.o: %.cpp
+# Generic rule for all .o files
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Clean
 clean:
-	rm -f $(MAIN_OBJ) $(CRYPTION_OBJ) $(THREAD_OBJ) $(MAIN_TARGET) $(CRYPTION_TARGET) $(THREAD_TARGET) Cryption_mt.o
-	@echo "Cleaned all build artifacts."
+	@if [ -d "$(BUILD_DIR)" ]; then \
+		rm -rf $(BUILD_DIR)/* $(BUILD_DIR)/.* 2>/dev/null || true; \
+	fi
+	@echo "Cleaned build contents"
 
 .PHONY: clean all
