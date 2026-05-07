@@ -31,7 +31,6 @@ Uses process-based parallelism through the `fork()` system call with shared-memo
 - POSIX semaphores
 - Parallel task execution
 
----
 
 ### 2. `Multithreading`
 
@@ -44,7 +43,6 @@ Uses a thread-pool based execution model built with modern C++ threading primiti
 - Low-overhead concurrent execution
 - Efficient multicore CPU utilization
 
----
 
 ## System Architecture
 
@@ -56,7 +54,6 @@ The following diagram illustrates the multithreaded execution pipeline used in t
        width="90%">
 </p>
 
----
 
 ## Benchmark Results
 
@@ -74,7 +71,6 @@ with a dataset of 1000 files.
 | Correctness | 98.8% | 100% |
 | Synchronization Overhead | High | Low |
 
----
 
 ### Comparison with Existing Tools
 
@@ -86,7 +82,6 @@ with a dataset of 1000 files.
 
 The multithreaded implementation achieved the highest throughput due to lightweight synchronization and efficient thread-pool execution.
 
----
 
 ## Technologies Used
 
@@ -100,7 +95,6 @@ The multithreaded implementation achieved the highest throughput due to lightwei
 - `std::mutex`
 - `std::condition_variable`
 
----
 
 ## Getting Started
 
@@ -111,7 +105,6 @@ git clone <repo-url>
 cd EncryptDecrypt
 ```
 
----
 
 ### Build Setup
 
@@ -135,7 +128,6 @@ python3 makeDirs.py
 make all
 ```
 
----
 
 ### Run Multiprocessing Version
 
@@ -143,7 +135,6 @@ make all
 ./build/encrypt_decrypt
 ```
 
----
 
 ### Run Multithreading Version
 
@@ -151,7 +142,6 @@ make all
 ./build/encrypt_decrypt_mt
 ```
 
----
 
 ### Input Example
 
@@ -163,7 +153,6 @@ Enter the action(encrypt/decrypt):
 encrypt
 ```
 
----
 
 ## Future Scope
 
@@ -173,12 +162,9 @@ encrypt
 - Distributed encryption support
 - Cross-platform optimization
 
----
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE) © 2025 Soumalya Karak.
-
----
+This project is licensed under the [MIT License](./LICENSE) © 2025 Soumalya Karak
 
 ⭐ If you found this project useful, consider giving it a star.
