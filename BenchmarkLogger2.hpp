@@ -155,7 +155,6 @@ private:
         std::cout << "Files Submitted: " << total_files << std::endl;
         std::cout << "Files Successful: " << successful << " (✓)" << std::endl;
         std::cout << "Files Failed: " << failed << " (✗)" << std::endl;
-        std::cout << "Crypto Operations Completed: " << crypto_completed << std::endl;
 
         if (total_files > 0) {
             double success_rate = (double(successful) / total_files) * 100.0;

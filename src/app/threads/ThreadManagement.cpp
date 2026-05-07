@@ -1,58 +1,76 @@
 #include "ThreadManagement.hpp"
-#include<iostream>
-#include<cstring>
-#include<sys/wait.h>
+#include <iostream>
 #include "../encryptDecrypt/Cryption.hpp"
-#include <sys/mman.h>
-#include <atomic>
-#include <sys/fcntl.h>
-#include <semaphore.h>
-#include<thread>
 
+// Constructor,create threads
 ThreadManagement::ThreadManagement(){
-    itemsSemaphore = sem_open("/items_semaphore", O_CREAT, 0666, 0);
-    emptySlotsSemaphore = sem_open("/empty_slots_semaphore", O_CREAT, 0666, 1000);
-    shmFd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
-    ftruncate(shmFd, sizeof(SharedMemory));
-    sharedMem = static_cast<SharedMemory *>(mmap(nullptr, sizeof(SharedMemory), PROT_READ | PROT_WRITE, MAP_SHARED, shmFd, 0));
-    sharedMem->front = 0;
-    sharedMem->rear = 0;
-    sharedMem->size.store(0);
-}
+    int numThreads = std::thread::hardware_concurrency();
 
-ThreadManagement::~ThreadManagement() {
-    munmap(sharedMem, sizeof(SharedMemory));
-    shm_unlink(SHM_NAME);
-}
+    if (numThreads == 0) numThreads = 4;//fallback
 
-bool ThreadManagement::SubmitToQueue(std::unique_ptr<Task>task){
-    sem_wait(emptySlotsSemaphore);
-    std::unique_lock<std::mutex> lock(queueLock);
-
-    if (sharedMem->size.load() >= 1000) {
-        return false;
+    for (int i = 0; i < numThreads; i++){
+        workers.emplace_back(&ThreadManagement::worker, this);
     }
-    strcpy(sharedMem->tasks[sharedMem->rear], task->toString().c_str());
-    sharedMem->rear = (sharedMem->rear + 1) % 1000;
-    sharedMem->size.fetch_add(1);
-    lock.unlock();
-    sem_post(itemsSemaphore);
-    
-    std::thread thread_1(&ThreadManagement::executeTasks, this);
-    thread_1.detach();
+}
 
+//Destructor
+ThreadManagement::~ThreadManagement(){
+    {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        stop = true;
+    }
+
+    condition.notify_all();
+
+    for(auto &t : workers){
+        if(t.joinable()) t.join();
+    }
+}
+
+//Add task to queue
+bool ThreadManagement::SubmitToQueue(std::unique_ptr<Task> task){
+    {
+        std::lock_guard<std::mutex>lock(queueMutex);
+        taskQueue.push(task->toString());
+    }
+
+    condition.notify_one();
     return true;
 }
 
-void ThreadManagement::executeTasks(){
-   sem_wait(itemsSemaphore);
-   std::unique_lock<std::mutex> lock(queueLock);
-   char taskstr[256];
-   strcpy(taskstr, sharedMem->tasks[sharedMem->front]);
-   sharedMem->front = (sharedMem->front + 1) % 1000;
-   sharedMem->size.fetch_sub(1);
-   lock.unlock();
-   sem_post(emptySlotsSemaphore);
+// Worker thread loop
+void ThreadManagement::worker(){
+    while(true){
+        std::string task;
+        {
+            std::unique_lock<std::mutex>lock(queueMutex);
 
-   executeCryption(taskstr);
+            condition.wait(lock, [this](){
+                return !taskQueue.empty() || stop; //if queue is empty , thread sleeps.
+            });
+
+            if(stop && taskQueue.empty()) //If stop signal given and no work left , thread exits cleanly.
+                return;
+
+            task = taskQueue.front();
+            taskQueue.pop();
+        }
+
+        executeCryption(task);
+    }
 }
+
+// Wait for all tasks to finish
+// void ThreadManagement::executeTasks(){
+//     {
+//         std::unique_lock<std::mutex> lock(queueMutex);
+//         stop = true;
+//     }
+
+//     condition.notify_all();
+
+//     for (auto &t : workers) {
+//         if (t.joinable())
+//             t.join();
+//     }
+// }

@@ -2,41 +2,39 @@
 #define THREAD_MANAGEMENT_HPP
 
 #include "Task.hpp"
+
 #include <queue>
 #include <memory>
-#include <atomic>
-#include <semaphore.h>
 #include <mutex>
+#include <condition_variable>
+#include <vector>
+#include <thread>
+#include <string>
 
 class ThreadManagement
 {
-     sem_t* itemsSemaphore;
-     sem_t* emptySlotsSemaphore;
 public:
-     ThreadManagement();
-     ~ThreadManagement();
-     bool SubmitToQueue(std::unique_ptr<Task> task);
-     void executeTasks();
+    ThreadManagement();              
+    ~ThreadManagement(); 
+
+    bool SubmitToQueue(std::unique_ptr<Task> task); 
 
 private:
-     struct SharedMemory
-     {
-          std::atomic<int> size;
-          char tasks[1000][256];
-          int front;
-          int rear;
+    // Worker function
+    void worker();
 
-          void printSharedMemory()
-          {
-               std::cout << size << std::endl;
-               std::cout << front << std::endl;
-               std::cout << rear << std::endl;
-          }
-     };
-     SharedMemory *sharedMem;
-     int shmFd;
-     const char *SHM_NAME = "/my_queue";
-     std::mutex queueLock;
+    // Task queue
+    std::queue<std::string> taskQueue;
+
+    // Synchronization
+    std::mutex queueMutex;
+    std::condition_variable condition;
+
+    // Thread pool
+    std::vector<std::thread> workers;
+
+    // Stop signal
+    bool stop = false;
 };
 
 #endif

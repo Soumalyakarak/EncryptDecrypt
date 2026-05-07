@@ -166,6 +166,13 @@ int decryptFile(const std::string &filePath,
         return -1;
     }
 
+    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, TAG_SIZE, tag) != 1)
+    {   
+        std::cerr << "Tag set failed\n";
+        EVP_CIPHER_CTX_free(ctx);
+        return -1;
+    }
+
     std::vector<unsigned char> plaintext(ciphertext.size());
     int len = 0, plaintext_len = 0;
 
@@ -179,12 +186,6 @@ int decryptFile(const std::string &filePath,
 
     plaintext_len = len;
 
-    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, TAG_SIZE, tag) != 1)
-    {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-
     if (EVP_DecryptFinal_ex(ctx, plaintext.data() + len, &len) <= 0)
     {
         EVP_CIPHER_CTX_free(ctx);
@@ -194,7 +195,9 @@ int decryptFile(const std::string &filePath,
     plaintext_len += len;
     EVP_CIPHER_CTX_free(ctx);
 
-    std::ofstream out(filePath + ".dec", std::ios::binary);
+    std::string outPath = filePath.substr(0, filePath.size() - 4);
+    std::ofstream out(outPath + ".dec", std::ios::binary);
+
     if (!out)
     {
         std::cerr << "Output file open failed\n";

@@ -9,6 +9,11 @@
 #include <semaphore.h>
 
 ProcessManagement::ProcessManagement(){
+    //Clean Old IPC Resources first
+    sem_unlink("/items_semaphore");
+    sem_unlink("/empty_slots_semaphore");
+    shm_unlink(SHM_NAME);
+    //  Create Fresh Ones
     itemsSemaphore = sem_open("/items_semaphore", O_CREAT, 0666, 0);
     emptySlotsSemaphore = sem_open("/empty_slots_semaphore", O_CREAT, 0666, 1000);
     shmFd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
