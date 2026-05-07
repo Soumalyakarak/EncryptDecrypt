@@ -103,6 +103,9 @@ Clone the repository:
 ```bash
 git clone <repo-url>
 cd EncryptDecrypt
+
+# Switch to stable implementation branch
+git checkout v1/EncryptDecrypt
 ```
 
 
