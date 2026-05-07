@@ -95,13 +95,19 @@ The multithreaded implementation achieved the highest throughput due to lightwei
 - `std::mutex`
 - `std::condition_variable`
 
+### Install Dependencies
+
+```bash
+sudo apt update
+sudo apt install build-essential libssl-dev python3 python3-venv
+```
 
 ## Getting Started
 
 Clone the repository:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Soumalyakarak/EncryptDecrypt.git
 cd EncryptDecrypt
 
 # Switch to stable implementation branch
@@ -118,8 +124,11 @@ mkdir build
 # Create .env file
 touch .env
 
+# Add encryption key
+echo "KEY=your_secret_key" >> .env
+
 # Create Python virtual environment
-python -m venv myvenv
+python3 -m venv myvenv
 
 # Activate virtual environment
 source myvenv/bin/activate
