@@ -165,6 +165,25 @@ Enter the action(encrypt/decrypt):
 encrypt
 ```
 
+### Verify Results
+
+Check number of plaintext files:
+
+```bash
+cd test
+ls -1 *.txt | wc -l
+```
+Check number of encrypted files:
+
+```bash
+ls -1 *.enc | wc -l
+```
+Check number of decrypted files:
+
+```bash
+ls -1 *.dec | wc -l
+```
+
 
 ## Future Scope
 
